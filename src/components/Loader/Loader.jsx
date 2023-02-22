@@ -1,8 +1,8 @@
 import { Audio } from 'react-loader-spinner';
 import PropTypes from 'prop-types';
 
-const Loader = ({ visually, visuallySecond }) => {
-  if (visually || visuallySecond) {
+const Loader = ({ visually}) => {
+  if (visually) {
     return (
       <Audio
         height="80"
@@ -13,11 +13,11 @@ const Loader = ({ visually, visuallySecond }) => {
       />
     );
   }
+
 };
 
 Loader.propTypes = {
   visually: PropTypes.bool,
-  visuallySecond: PropTypes.bool,
 };
 
 export default Loader;

@@ -17,7 +17,7 @@ export async function fetchPictures(query, page) {
   });
   try {
     const response = await axios(FETCH_API_URL + '?' + params);
-    console.log(response);
+    // console.log(response);
     return response;
   } catch (error) {
     console.log(error);

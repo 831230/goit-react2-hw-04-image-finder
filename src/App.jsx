@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchPictures } from 'components/fetchPictures/fetchPictures';
 
 import Searchbar from 'components/Searchbar/Searchbar';
@@ -8,38 +8,30 @@ import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
 import Modal from 'components/Modal/Modal';
 
-class App extends Component {
-  state = {
-    nextPage: 1,
-    inputValue: '',
-    items: [],
-    totalHits: 0,
-    currentPage: 1,
-    loader: false,
-    loaderSecond: false,
-    dataLargeImg: {},
-  };
+const App = () => {
+  const [nextPage, setNextPage] = useState(1);
+  const [inputValue, setInputValue] = useState('');
+  const [items, setItems] = useState([]);
+  const [totalHits, setTotalHits] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loader, setLoader] = useState(false);
+  const [dataLargeImg, setDataLargeImg] = useState({
+    large:'',
+    alt:''
+  });
 
-  addCurrentValue = event => {
+  const addCurrentValue = (event) => {
     event.preventDefault();
-    const name = event.target[1].name;
-    const value = event.target[1].value;
-    this.setState({
-      [name]: value,
-    });
-  };
+    const value = event.target.elements.inputValue.value;
+    setInputValue(value)
+  }
 
-  fetchApi = async page => {
-    this.setState({
-      loader: true,
-    });
-    const searchText = this.state.inputValue.split(' ').join('+');
+  const fetchApi = async page => {
+    setLoader(true)
+    const searchText = inputValue.split(' ').join('+');
 
     fetchPictures(searchText, page).then(response => {
-      this.setState({
-        loader: false,
-        loaderSecond: false,
-      });
+      setLoader(false)
       const totalHits = response.data.totalHits;
       const photos = response.data.hits.map(photo => {
         return {
@@ -49,88 +41,91 @@ class App extends Component {
           description: photo.tags,
         };
       });
-      this.setState(prevState => {
-        return {
-          items: [...prevState.items, ...photos],
-          totalHits: totalHits,
-        };
-      });
+      setItems([...items, ...photos]);
+      setTotalHits(totalHits);
+      console.log(items);
     });
   };
 
-  loadMoreImages = () => {
-    this.setState(prevState => ({
-      nextPage: prevState.nextPage + 1,
-      currentPage: this.state.nextPage,
-      loaderSecond: true,
-    }));
+  const loadMoreImages = () => {
+    setNextPage(nextPage+1);
+    setCurrentPage(nextPage);
   };
 
-  resetItems = () => {
-    this.setState({
-      items: [],
-      currentPage: 1,
-    });
+  const resetItems = () => {
+    console.log("reset");
+    setItems(items.length=0);
+    setCurrentPage(1);
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.inputValue !== this.state.inputValue) {
-      this.resetItems();
-      this.fetchApi();
+  // useEffect(()=>{
+  //   console.log("mount");
+  //   setItems(items.length=0)
+  // },[])
+
+  useEffect(()=>{
+    if(inputValue.length>0){
+      resetItems();
+      fetchApi()
     }
-    if (
-      prevState.currentPage < this.state.currentPage &&
-      prevState.inputValue === this.state.inputValue
-    ) {
-      this.fetchApi(this.state.nextPage);
-    }
-  }
+  },[inputValue]);
 
-  setDataToLargeImg = evt => {
-    this.setState({
-      dataLargeImg: {
-        large: evt.target.dataset.large,
-        alt: evt.target.alt,
-      },
-    });
+  useEffect(()=>{
+    if(inputValue.length>0){
+      fetchApi(nextPage)
+      console.log(currentPage); 
+    }
+  },[currentPage]);
+
+  const setDataToLargeImg = evt => {
+    console.log("setDataToLargeImage");
+    setDataLargeImg(
+      dataLargeImg.large=evt.target.dataset.large,
+      dataLargeImg.alt=evt.target.alt
+    );
+    console.log(dataLargeImg);
   };
 
-  closeModal = event => {
+  const closeModal = event => {
+    const imgObj = {
+      large: dataLargeImg.large,
+      alt: dataLargeImg.alt
+    };
     if (event.target.nodeName !== 'IMG' || event.keyCode === 'Escape') {
-      this.setState({
-        dataLargeImg: {
-          large: '',
-          alt: '',
-        },
-      });
+      imgObj.large = '';
+      imgObj.alt = '';
     }
+    setDataLargeImg(imgObj)
   };
 
-  render() {
-    return (
+    const showLoading = loader&&currentPage===1;
+    const showLoadingMore = loader&&currentPage>1;
+
+  return(
+
       <>
-        <Searchbar onSubmit={this.addCurrentValue} />
-        <Loader visually={this.state.loader} />
-        <ImageGallery closeModal={this.closeModal}>
+        <Searchbar onSubmit={addCurrentValue} />
+        <Loader visually={showLoading}/>
+        <ImageGallery closeModal={closeModal}>
           <ImageGalleryItems
-            items={this.state.items}
-            getData={this.setDataToLargeImg}
+            items={items}
+            getData={setDataToLargeImg}
           />
         </ImageGallery>
         <Modal
-          imgObject={this.state.dataLargeImg}
-          closeModal={this.closeModal}
+          imgObject={dataLargeImg}
+          closeModal={closeModal}
         />
-        <Loader visuallySecond={this.state.loaderSecond} />
+        <Loader visually={showLoadingMore}  />
         <Button
-          loadMore={this.loadMoreImages}
-          items={this.state.items}
-          totalHits={this.state.totalHits}
-          currentPage={this.state.currentPage}
+          loadMore={loadMoreImages}
+          items={items}
+          totalHits={totalHits}
+          currentPage={currentPage}
         />
       </>
-    );
-  }
+  )
 }
 
 export default App;
+
