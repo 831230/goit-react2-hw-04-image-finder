@@ -1,23 +1,20 @@
-import { Audio } from 'react-loader-spinner';
-import PropTypes from 'prop-types';
+import React from "react";
 
-const Loader = ({ visually}) => {
-  if (visually) {
-    return (
-      <Audio
-        height="80"
-        width="80"
-        radius="9"
-        color="green"
-        ariaLabel="loading"
-      />
-    );
-  }
+import { Audio } from "react-loader-spinner";
 
-};
-
-Loader.propTypes = {
-  visually: PropTypes.bool,
+const Loader = ({ loader }) => {
+  const loaderVisibility = loader ? (
+    <Audio
+  height="100"
+  width="100"
+  color="#4fa94d"
+  ariaLabel="audio-loading"
+  wrapperStyle={{}}
+  wrapperClass="wrapper-class"
+  visible={true}
+/>
+  ) : null;
+  return <>{loaderVisibility}</>;
 };
 
 export default Loader;

@@ -1,23 +1,22 @@
-import modalStyles from './Modal.module.css';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-const Modal = ({ imgObject, closeModal }) => {
-  return (
-    <>
-      {imgObject.large && (
-        <div className={modalStyles.overlay} onClick={closeModal}>
-          <div className={modalStyles.modal}>
-            <img src={imgObject.large} alt={imgObject.alt} />
-          </div>
-        </div>
-      )}
-    </>
-  );
+import modalStyles from './Modal.module.css';
+
+const Modal = ({ image, hiddenModal }) => {
+  const largeImage = image ? (
+    <div className={modalStyles.Overlay} onClick={hiddenModal}>
+      <div className={modalStyles.Modal}>
+        <img src={image} alt="" />
+      </div>
+    </div>
+  ) : null;
+  return <>{largeImage}</>;
 };
 
 Modal.propTypes = {
-  imgObject: PropTypes.objectOf(PropTypes.string),
-  closeModal: PropTypes.func,
+  image: PropTypes.string,
+  hiddenModal: PropTypes.func,
 };
 
 export default Modal;

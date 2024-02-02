@@ -1,29 +1,24 @@
-import buttonStyles from './Button.module.css';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-const Button = ({ loadMore, items, totalHits, currentPage }) => {
-  return (
-    <>
-      {items.length > 0 && currentPage <= totalHits / 12 ? (
-        <button className={buttonStyles.moreButton} onClick={loadMore}>
-          Load more
-        </button>
-      ) : null}
-    </>
-  );
+import buttonStyles from './Button.module.css';
+
+const Button = ({ loadMore, page, perPage, totalHits }) => {
+  const loadMoreBtn =
+    totalHits + perPage - page * perPage > perPage ? (
+      <button onClick={loadMore} className={buttonStyles.Button}>
+        Load more
+      </button>
+    ) : null;
+  return <>{loadMoreBtn}</>;
 };
 
 Button.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      webformatURL: PropTypes.string,
-      description: PropTypes.string,
-      largeImageURL: PropTypes.string,
-    })
-  ),
+  items: PropTypes.array,
   loadMore: PropTypes.func,
   totalHits: PropTypes.number,
-  currentPage: PropTypes.number,
+  page: PropTypes.number,
+  perPage: PropTypes.number,
 };
 
 export default Button;

@@ -1,10 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
-export async function fetchPictures(query, page) {
+export const fetchPixabayApi = async(query, page=1) => {
   const FETCH_API_URL = 'https://pixabay.com/api/';
-  const API_KEY = '26135070-3e729b9e8c0999352fd85e768';
+  const API_KEY = "26135070-3e729b9e8c0999352fd85e768";
   const IMAGES_PER_PAGE = 12;
-
   const params = new URLSearchParams({
     key: API_KEY,
     q: query,
@@ -16,10 +15,9 @@ export async function fetchPictures(query, page) {
     per_page: IMAGES_PER_PAGE,
   });
   try {
-    const response = await axios(FETCH_API_URL + '?' + params);
-    // console.log(response);
-    return response;
+    const response = await axios.get(FETCH_API_URL + '?' + params);
+    return response
   } catch (error) {
     console.log(error);
   }
-}
+};

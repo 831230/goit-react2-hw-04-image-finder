@@ -1,36 +1,27 @@
-import galleryItemsStyle from './ImageGalleryItem.module.css';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
 
-const ImageGalleryItems = ({ items, getData }) => {
-  return (
-    <>
-      {items &&
-        items.map(item => {
-          return (
-            <li key={item.id} className={galleryItemsStyle.item}>
-              <img
-                className={galleryItemsStyle.image}
-                src={item.webformatURL}
-                alt={item.description}
-                data-large={item.largeImageURL}
-                onClick={getData}
-              />
-            </li>
-          );
-        })}
-    </>
-  );
+import imageGalleryItemStyles from './ImageGalleryItem.module.css';
+
+const ImageGalleryItem = ({ images, showImg }) => {
+  const imagesList = images.map(image => (
+    <li key={nanoid()} className={imageGalleryItemStyles.ImageGalleryItem}>
+      <img
+        src={image.webImg}
+        alt={image.tag}
+        className={imageGalleryItemStyles.ImageGalleryItemImage}
+        onClick={() => showImg(image.largeImg)}
+      />
+    </li>
+  ));
+
+  return <>{imagesList}</>;
 };
 
-ImageGalleryItems.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      webformatURL: PropTypes.string,
-      description: PropTypes.string,
-      largeImageURL: PropTypes.string,
-    })
-  ),
-  getData: PropTypes.func,
+ImageGalleryItem.propTypes = {
+  images: PropTypes.array,
+  showImg: PropTypes.func,
 };
 
-export default ImageGalleryItems;
+export default ImageGalleryItem;

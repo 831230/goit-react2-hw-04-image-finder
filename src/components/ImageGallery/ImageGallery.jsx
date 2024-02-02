@@ -1,17 +1,14 @@
-import galleryStyles from './ImageGallery.module.css';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-const ImageGallery = ({ children, closeModal }) => {
-  return (
-    <ul className={galleryStyles.gallery} onClick={closeModal}>
-      {children}
-    </ul>
-  );
+import imageGalleryStyles from './ImageGallery.module.css';
+
+const ImageGallery = ({ children }) => {
+  return <ul className={imageGalleryStyles.ImageGallery}>{children}</ul>;
 };
 
 ImageGallery.propTypes = {
   children: PropTypes.node,
-  closeModal: PropTypes.func,
 };
 
 export default ImageGallery;
